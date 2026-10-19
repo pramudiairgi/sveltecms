@@ -1,5 +1,8 @@
 import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
+import { mediaRoutes } from "./api/media";
+import { roomsRoutes } from "./api/rooms";
+import { packagesRoutes } from "./api/packages";
 
 export const app = new Elysia()
   .use(
@@ -9,10 +12,14 @@ export const app = new Elysia()
       },
     })
   )
+  .use(mediaRoutes)
+  .use(roomsRoutes)
+  .use(packagesRoutes)
   .get("/health", () => ({ status: "ok" }))
   .onError(({ error, code }) => {
+    const message = error instanceof Error ? error.message : String(error);
     if (code === "VALIDATION") {
-      return new Response(JSON.stringify({ error: error.message }), {
+      return new Response(JSON.stringify({ error: message }), {
         status: 422,
         headers: { "content-type": "application/json" },
       });
@@ -23,7 +30,7 @@ export const app = new Elysia()
         headers: { "content-type": "application/json" },
       });
     }
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { "content-type": "application/json" },
     });
