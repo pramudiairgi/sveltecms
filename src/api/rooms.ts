@@ -23,16 +23,28 @@ const notFound = () =>
   });
 
 export const roomsRoutes = new Elysia({ prefix: "/rooms" })
-  .get("/", () =>
-    db.select().from(rooms).where(isNull(rooms.deletedAt))
-  )
+  .get("/", () => db.select().from(rooms).where(isNull(rooms.deletedAt)))
   .post(
     "/",
     async ({ body }) => {
       const [row] = await db.insert(rooms).values(body).returning();
       return new Response(JSON.stringify(row), { status: 201 });
     },
-    { body: roomsBody }
+    { body: roomsBody },
+  )
+  .get(
+    "/slug/:slug",
+    async ({ params: { slug } }) => {
+      const [row] = await db
+        .select()
+        .from(rooms)
+        .where(and(eq(rooms.slug, slug), isNull(rooms.deletedAt)));
+      if (!row) return notFound();
+      return row;
+    },
+    {
+      params: t.Object({ slug: t.String() }),
+    },
   )
   .get(
     "/:id",
@@ -44,7 +56,7 @@ export const roomsRoutes = new Elysia({ prefix: "/rooms" })
       if (!row) return notFound();
       return row;
     },
-    { params: t.Object({ id: t.Numeric() }) }
+    { params: t.Object({ id: t.Numeric() }) },
   )
   .patch(
     "/:id",
@@ -57,7 +69,7 @@ export const roomsRoutes = new Elysia({ prefix: "/rooms" })
       if (!row) return notFound();
       return row;
     },
-    { params: t.Object({ id: t.Numeric() }), body: t.Partial(roomsBody) }
+    { params: t.Object({ id: t.Numeric() }), body: t.Partial(roomsBody) },
   )
   .delete(
     "/:id",
@@ -70,5 +82,5 @@ export const roomsRoutes = new Elysia({ prefix: "/rooms" })
       if (!row) return notFound();
       return new Response(null, { status: 204 });
     },
-    { params: t.Object({ id: t.Numeric() }) }
+    { params: t.Object({ id: t.Numeric() }) },
   );

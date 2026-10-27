@@ -23,16 +23,26 @@ const notFound = () =>
   });
 
 export const packagesRoutes = new Elysia({ prefix: "/packages" })
-  .get("/", () =>
-    db.select().from(packages).where(isNull(packages.deletedAt))
-  )
+  .get("/", () => db.select().from(packages).where(isNull(packages.deletedAt)))
   .post(
     "/",
     async ({ body }) => {
       const [row] = await db.insert(packages).values(body).returning();
       return new Response(JSON.stringify(row), { status: 201 });
     },
-    { body: packagesBody }
+    { body: packagesBody },
+  )
+  .get(
+    "/slug/:slug",
+    async ({ params: { slug } }) => {
+      const [row] = await db
+        .select()
+        .from(packages)
+        .where(and(eq(packages.slug, slug), isNull(packages.deletedAt)));
+      if (!row) return notFound();
+      return row;
+    },
+    { params: t.Object({ slug: t.String() }) },
   )
   .get(
     "/:id",
@@ -44,7 +54,7 @@ export const packagesRoutes = new Elysia({ prefix: "/packages" })
       if (!row) return notFound();
       return row;
     },
-    { params: t.Object({ id: t.Numeric() }) }
+    { params: t.Object({ id: t.Numeric() }) },
   )
   .patch(
     "/:id",
@@ -57,7 +67,7 @@ export const packagesRoutes = new Elysia({ prefix: "/packages" })
       if (!row) return notFound();
       return row;
     },
-    { params: t.Object({ id: t.Numeric() }), body: t.Partial(packagesBody) }
+    { params: t.Object({ id: t.Numeric() }), body: t.Partial(packagesBody) },
   )
   .delete(
     "/:id",
@@ -70,5 +80,5 @@ export const packagesRoutes = new Elysia({ prefix: "/packages" })
       if (!row) return notFound();
       return new Response(null, { status: 204 });
     },
-    { params: t.Object({ id: t.Numeric() }) }
+    { params: t.Object({ id: t.Numeric() }) },
   );
