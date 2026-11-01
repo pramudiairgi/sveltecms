@@ -32,7 +32,7 @@
 
           <p class="mt-4 font-medium">{rupiah(room.pricePerNight)} / malam</p>
 
-          <a class="mt-4 inline-block text-blue-600 hover:underline" href="/kamar/{room.slug}">
+          <a class="mt-4 inline-block text-blue-600 hover:underline" href="/rooms/{room.slug}">
             Lihat detail
           </a>
         </article>
