@@ -6,7 +6,6 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { title } from "node:process";
 
 export const users = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
