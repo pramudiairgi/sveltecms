@@ -21,7 +21,7 @@ type Room = {
 
 export const load: PageServerLoad = async ({ params }) => {
     try {
-        const room = await apiGet<Room>('/rooms/slug/${params.slug}');
+        const room = await apiGet<Room>(`/rooms/slug/${params.slug}`);
         return { room };
     } catch {
         error(404, 'Room not found');

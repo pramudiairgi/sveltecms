@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { PageProps } from './$types'
+  import type { PageProps } from "./$types";
 
-  let { data }: PageProps = $props()
+  let { data }: PageProps = $props();
 
   const rupiah = (n: number) =>
-    new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0
-    }).format(n)
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(n);
 </script>
 
 <svelte:head>
@@ -27,12 +27,15 @@
           <h2 class="text-xl font-semibold">{room.name}</h2>
 
           <p class="mt-2 text-sm text-gray-600">
-            {room.excerpt ?? room.description ?? 'Deskripsi belum tersedia.'}
+            {room.excerpt ?? room.description ?? "Deskripsi belum tersedia."}
           </p>
 
           <p class="mt-4 font-medium">{rupiah(room.pricePerNight)} / malam</p>
 
-          <a class="mt-4 inline-block text-blue-600 hover:underline" href="/rooms/{room.slug}">
+          <a
+            class="mt-4 inline-block text-blue-600 hover:underline"
+            href="/rooms/{room.slug}"
+          >
             Lihat detail
           </a>
         </article>

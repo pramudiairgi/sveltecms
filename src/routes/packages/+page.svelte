@@ -1,10 +1,10 @@
 <script lang="ts">
-    import type { PageProps } from './$types'
-    let { data }: PageProps = $props()
+  import type { PageProps } from "./$types";
+  let { data }: PageProps = $props();
 </script>
 
 <svelte:head>
-    <title>Paket — Villa CMS</title>
+  <title>Paket — Villa CMS</title>
 </svelte:head>
 
 <h1>Paket Kami</h1>
@@ -13,20 +13,24 @@
   <p>Belum ada paket tersedia.</p>
 {:else}
   <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    {#each data.packages as p (p.id)}
+    {#each data.packages as pkg (pkg.id)}
       <div class="border rounded-lg p-4 shadow-sm">
-        <h2 class="text-xl font-bold mb-2">{p.title}</h2>
+        <h2 class="text-xl font-bold mb-2">{pkg.title}</h2>
         <p class="text-gray-600 mb-2">
-          {p.category ?? 'Tidak ada kategori'}
+          {pkg.category ?? "Tidak ada kategori"}
         </p>
         <p class="text-gray-600 mb-2">
-          {p.description ?? 'Tidak ada deskripsi.'}
+          {pkg.description ?? "Tidak ada deskripsi."}
         </p>
         <p class="font-semibold mb-2">
-          {Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(p.pricePerPerson)}
+          {Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+          }).format(pkg.pricePerPerson)}
           /orang
         </p>
-        <a href="/paket/{p.slug}" class="text-blue-600 hover:underline">
+        <a href="/packages/{pkg.slug}" class="text-blue-600 hover:underline">
           Lihat detail →
         </a>
       </div>
