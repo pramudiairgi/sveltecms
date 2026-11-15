@@ -1,6 +1,6 @@
-import { error } from '@sveltejs/kit';
-import { apiGet } from '#lib/server/api.ts';
-import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit'
+import { api } from '#lib/client/api.ts'
+import type { PageServerLoad } from './$types'
 
 type Room = {
   id: number
@@ -19,11 +19,9 @@ type Room = {
   deletedAt: Date | null
 }
 
-export const load: PageServerLoad = async ({ params }) => {
-    try {
-        const room = await apiGet<Room>(`/rooms/slug/${params.slug}`);
-        return { room };
-    } catch {
-        error(404, 'Room not found');
-    } 
+export const load: PageServerLoad = async ({ params }): Promise<{ room: Room }> => {
+  const response = await api.rooms.slug({ slug: params.slug }).get()
+  const room = response.data as Room | null
+  if (!room) error(404, 'Kamar tidak ditemukan')
+  return { room }
 }
