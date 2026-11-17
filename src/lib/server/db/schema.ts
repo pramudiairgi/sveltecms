@@ -4,6 +4,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -61,9 +62,11 @@ export const facilities = pgTable("facilities", {
 
 export const roomFacilities = pgTable("room_facilities", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  roomId: integer("room_id").references(() => rooms.id),
-  facilityId: integer("facility_id").references(() => facilities.id),
-});
+  roomId: integer("room_id").references(() => rooms.id).notNull(),
+  facilityId: integer("facility_id").references(() => facilities.id).notNull(),
+}, (t) => ({
+  roomFacilityUnique: unique().on(t.roomId, t.facilityId),
+}));
 
 export const packages = pgTable("packages", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -91,8 +94,8 @@ export const posts = pgTable("posts", {
   excerpt: varchar("excerpt", { length: 500 }),
   content: text("content"),
   status: varchar("status", { length: 50 }),
-  metaTitle: varchar("meta_title", { length: 255 }).unique(),
-  metaDescription: varchar("meta_description", { length: 255 }).unique(),
+  metaTitle: varchar("meta_title", { length: 255 }),
+  metaDescription: varchar("meta_description", { length: 255 }),
   publishAt: timestamp("publish_at").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -107,13 +110,13 @@ export const pages = pgTable("pages", {
   metaTitle: varchar("meta_title", { length: 255 }),
   metaDescription: varchar("meta_description", { length: 500 }),
   isPublished: boolean("is_published").default(false).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
+  createdAt: timestamp("created_at")
     .defaultNow()
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
+  updatedAt: timestamp("updated_at")
     .defaultNow()
     .notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  deletedAt: timestamp("deleted_at"),
 });
 
 export const faqs = pgTable("faqs", {
@@ -131,7 +134,7 @@ export const contactMessages = pgTable("contact_messages", {
   subject: varchar("subject", { length: 255 }),
   message: text("message").notNull(),
   status: varchar("status", { length: 50 }).default("unread").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
+  createdAt: timestamp("created_at")
     .defaultNow()
     .notNull(),
 });
@@ -141,11 +144,11 @@ export const settings = pgTable("settings", {
   settingKey: varchar("setting_key", { length: 255 }).notNull().unique(),
   settingValue: text("setting_value"),
   type: varchar("type", { length: 50 }).default("string").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
+  createdAt: timestamp("created_at")
     .defaultNow()
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
+  updatedAt: timestamp("updated_at")
     .defaultNow()
     .notNull(),
-  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  deletedAt: timestamp("deleted_at"),
 });
