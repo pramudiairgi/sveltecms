@@ -3,6 +3,7 @@ import { swagger } from "@elysiajs/swagger";
 import { mediaRoutes } from "./api/media";
 import { roomsRoutes } from "./api/rooms";
 import { packagesRoutes } from "./api/packages";
+import { authRoutes } from "./api/auth";
 
 export const app = new Elysia()
   .use(
@@ -15,6 +16,7 @@ export const app = new Elysia()
   .use(mediaRoutes)
   .use(roomsRoutes)
   .use(packagesRoutes)
+  .use(authRoutes)
   .get("/health", () => ({ status: "ok" }))
   .onError(({ error, code }) => {
     const message = error instanceof Error ? error.message : String(error);
@@ -24,7 +26,7 @@ export const app = new Elysia()
         headers: { "content-type": "application/json" },
       });
     }
-    if (code === "NOT_FOUND") {
+    if (code === 404) {
       return new Response(JSON.stringify({ error: "Not Found" }), {
         status: 404,
         headers: { "content-type": "application/json" },
